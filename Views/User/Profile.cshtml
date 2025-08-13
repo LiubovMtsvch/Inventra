@@ -1,0 +1,73 @@
+﻿@model CourseProjectitr.Models.ViewModels.DashboardViewModel
+
+
+@{
+    var username = Context.Session.GetString("GitHubUser") ?? User.Identity?.Name ?? "Гость";
+}
+<h2>Добро пожаловать, @username!</h2>
+
+
+<h3>Инвентаризации, которыми вы владеете</h3>
+<a asp-action="Create" asp-controller="Inventory" class="btn btn-primary mb-3">Создать новую инвентаризацию</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Категория</th>
+            <th>Предметы</th>
+            <th>Публичная?</th>
+            <th>Теги</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var inv in Model.OwnedInventories)
+        {
+            <tr>
+                <td>@inv.Title</td>
+                <td>@inv.Category</td>
+                <td>@inv.ItemsCount</td>
+                <td>@(inv.IsPublic ? "Да" : "Нет")</td>
+                <td>@string.Join(", ", inv.Tags)</td>
+                <td>
+                    <a asp-action="Edit" asp-controller="Inventory" asp-route-id="@inv.Id" class="btn btn-sm btn-warning">Редактировать</a>
+                    <a asp-action="Delete" asp-controller="Inventory" asp-route-id="@inv.Id" class="btn btn-sm btn-danger">Удалить</a>
+                    <a asp-action="Details" asp-controller="Inventory" asp-route-id="@inv.Id" class="btn btn-sm btn-info">Открыть</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<hr />
+
+<h3>Инвентаризации, к которым у вас есть доступ</h3>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Владелец</th>
+            <th>Категория</th>
+            <th>Публичная?</th>
+            <th>Теги</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var inv in Model.EditableInventories)
+        {
+            <tr>
+                <td>@inv.Title</td>
+                <td>@inv.OwnerName</td>
+                <td>@inv.Category</td>
+                <td>@(inv.IsPublic ? "Да" : "Нет")</td>
+                <td>@string.Join(", ", inv.Tags)</td>
+                <td>
+                    <a asp-action="Details" asp-controller="Inventory" asp-route-id="@inv.Id" class="btn btn-sm btn-info">Открыть</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
