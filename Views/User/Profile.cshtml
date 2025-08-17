@@ -4,11 +4,11 @@
 @{
     var username = Context.Session.GetString("GitHubUser") ?? User.Identity?.Name ?? "Гость";
 }
-<h2>Добро пожаловать, @username!</h2>
+<h2>Welcome, @username!</h2>
 
 
-<h3>Инвентаризации, которыми вы владеете</h3>
-<a asp-action="Create" asp-controller="Inventory" class="btn btn-primary mb-3">Создать новую инвентаризацию</a>
+<h3></h3>
+<a asp-action="Create" asp-controller="Inventory" class="btn btn-primary mb-3">Create new inventory</a>
 
 <table class="table table-striped">
     <thead>
@@ -26,8 +26,10 @@
         {
             <tr>
                 <td>@inv.Title</td>
+                <td>@inv.Description</td>
                 <td>@inv.Category</td>
-                <td>@inv.ItemsCount</td>
+                <td>@inv.ImageUrl</td>
+                <td>@inv.Tags</td>
                 <td>@(inv.IsPublic ? "Да" : "Нет")</td>
                 <td>@string.Join(", ", inv.Tags)</td>
                 <td>
@@ -47,12 +49,12 @@
 <table class="table table-bordered">
     <thead>
         <tr>
-            <th>Название</th>
-            <th>Владелец</th>
-            <th>Категория</th>
-            <th>Публичная?</th>
-            <th>Теги</th>
-            <th>Действия</th>
+            <th>Name</th>
+            <th>Owner</th>
+            <th>Category</th>
+            <th>Public</th>
+            <th>Tags</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>

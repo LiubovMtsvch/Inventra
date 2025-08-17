@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+
+using CourseProjectitr.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,9 +64,19 @@ builder.Services.AddSession();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 var app = builder.Build();
 
-// 🧪 Swagger
+
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    DbInitializer.SeedCategories(context); // ✅ вызов
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

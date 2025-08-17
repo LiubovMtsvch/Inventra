@@ -4,7 +4,7 @@ namespace CourseProjectitr.Models.ViewModels
 {
     public class DashboardViewModel
     {
-        public List<InventoryViewModel> OwnedInventories { get; set; } = new();
-        public List<InventoryViewModel> EditableInventories { get; set; } = new();
+        public List<InventorySummaryViewModel> OwnedInventories { get; set; } = new();
+        public List<InventorySummaryViewModel> EditableInventories { get; set; } = new();
     }
 }
