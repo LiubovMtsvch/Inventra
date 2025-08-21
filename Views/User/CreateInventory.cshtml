@@ -9,13 +9,14 @@
 <form asp-controller="Inventory" asp-action="Create" method="post">
 
     @Html.AntiForgeryToken()
-    <table class="table table-bordered align-middle text-center">
+    <table class="table table-clean">
         <thead class="table-light">
             <tr>
-                <th><i class="fas fa-tag"></i> Title</th>
+                <th><i class="fas fa-align-left"></i> Title</th>
                 <th><i class="fas fa-align-left"></i> Description</th>
                 <th><i class="fas fa-list"></i> Category</th>
                 <th><i class="fas fa-image"></i> Image URL</th>
+                <th><i class="fas fa-align-left"></i> Tag</th>
                 <th><i class="fas fa-eye"></i> Make public</th>
             </tr>
         </thead>
@@ -38,6 +39,14 @@
                 <td>
                     <input asp-for="ImageUrl" class="form-control" />
                 </td>
+                <td>
+                    <input id="tag-input" name="Tags" class="form-control" placeholder="Select tags" />
+                    <input type="hidden" id="TagsJson" name="TagsJson" />
+
+                    <div id="tag-preview" class="mt-2 text-start"></div>
+                </td>
+
+
                 <td class="text-center">
                     <input asp-for="IsPublic" type="checkbox" class="form-check-input" />
                 </td>
@@ -50,6 +59,59 @@
     </button>
 </form>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+
+<script>
+    const input = document.querySelector('input[name=Tags]');
+    const preview = document.getElementById('tag-preview');
+
+    const tagify = new Tagify(input, {
+        enforceWhitelist: false,
+        delimiters: ",",
+        whitelist: [
+            "computer", "telephone", "tv", "monitor", "keyboard",
+            "mouse", "printer", "scanner", "router", "modem"
+        ],
+        dropdown: {
+            enabled: 0,
+            maxItems: 10,
+            classname: "tags-look",
+            fuzzySearch: true,
+            position: 'text',
+            highlightFirst: true
+        }
+    });
+        tagify.on('add', function(e) {
+        const tagElm = e.detail.tag;
+        tagElm.removeAttribute('title');
+    });
+
+    // 👇 сериализация тегов
+    tagify.on('change', function () {
+        const tags = tagify.value.map(t => t.value);
+        document.getElementById('TagsJson').value = JSON.stringify(tags);
+
+        // 👇 отображение первых 4 тегов + намёк
+        preview.innerHTML = '';
+        const previewTags = tags.slice(0, 4);
+        previewTags.forEach(tag => {
+            const span = document.createElement('span');
+            span.className = 'tag-pill me-1';
+            span.textContent = tag;
+            preview.appendChild(span);
+        });
+
+        const remaining = tags.length - previewTags.length;
+        if (remaining > 0) {
+            const hint = document.createElement('span');
+            hint.className = 'tag-pill text-muted';
+            hint.textContent = `+${remaining} ещё`;
+            preview.appendChild(hint);
+        }
+    });
+
+    // 👇 показываем список при фокусе
+    input.addEventListener('focus', function () {
+        tagify.dropdown.show.call(tagify);
+    });
+
+</script>

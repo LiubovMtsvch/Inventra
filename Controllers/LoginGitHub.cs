@@ -23,7 +23,7 @@ namespace CourseProjectitr.Controllers
             var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             if (!result.Succeeded)
             {
-                return Redirect("/index.html");
+                return RedirectToAction("Index", "Home");
             }
 
             var name = result.Principal?.Identities?.FirstOrDefault()?.FindFirst("urn:github:login")?.Value;

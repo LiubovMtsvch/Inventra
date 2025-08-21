@@ -11,7 +11,7 @@ using CourseProjectitr.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 🔐 Аутентификация
+//google
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -22,6 +22,7 @@ builder.Services.AddAuthentication(options =>
     options.ClientId = builder.Configuration["GoogleKeys:ClientId"];
     options.ClientSecret = builder.Configuration["GoogleKeys:ClientSecret"];
 })
+//github
 .AddOAuth("GitHub", options =>
 {
     options.ClientId = builder.Configuration["GitHub:ClientId"];
@@ -34,7 +35,7 @@ builder.Services.AddAuthentication(options =>
 
     options.SaveTokens = true;
 
-    // Мапим нужные поля
+
     options.ClaimActions.MapJsonKey("urn:github:login", "login");
     options.ClaimActions.MapJsonKey("urn:github:name", "name");
     options.ClaimActions.MapJsonKey("urn:github:url", "html_url");
@@ -52,13 +53,11 @@ builder.Services.AddAuthentication(options =>
         var user = System.Text.Json.JsonDocument.Parse(await response.Content.ReadAsStringAsync());
         context.RunClaimActions(user.RootElement);
 
-        // Устанавливаем имя пользователя как Identity.Name
         var name = user.RootElement.GetProperty("name").GetString() ?? user.RootElement.GetProperty("login").GetString();
         context.Identity.AddClaim(new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Name, name));
     };
 });
 
-// 📦 Сервисы
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession();
 builder.Services.AddEndpointsApiExplorer();
@@ -74,7 +73,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    DbInitializer.SeedCategories(context); // ✅ вызов
+    DbInitializer.SeedCategories(context); 
 }
 
 if (app.Environment.IsDevelopment())
@@ -87,7 +86,6 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// 🌐 Middleware
 app.UseStaticFiles();
 app.UseHttpsRedirection();
 app.UseSession();

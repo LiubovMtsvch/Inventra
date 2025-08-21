@@ -1,0 +1,67 @@
+﻿
+@model List<CourseProjectitr.Models.Inventory>
+@{
+    Layout = "_Layout";
+    var categories = ViewBag.Categories as List<SelectListItem>;
+}
+
+<h2 class="mb-4"><i class="fas fa-pen-to-square me-2"></i>Редактирование инвентаризации</h2>
+
+<form asp-controller="Inventory" asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+
+    <table class="table table-bordered align-middle text-center">
+        <thead class="table-light">
+            <tr>
+                <th><i class="fas fa-tag"></i> Title</th>
+                <th><i class="fas fa-align-left"></i> Description</th>
+                <th><i class="fas fa-list"></i> Category</th>
+                <th><i class="fas fa-image"></i> Image URL</th>
+                <th><i class="fas fa-eye"></i> Make public</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <tr>
+                    <td>
+                        <input type="hidden" name="inventories[@i].Id" value="@Model[i].Id" />
+                        <input name="inventories[@i].Title" value="@Model[i].Title" class="form-control" />
+                    </td>
+                    <td>
+                        <textarea name="inventories[@i].Description" class="form-control form-control-sm" rows="1">@Model[i].Description</textarea>
+                    </td>
+                    <td>
+           
+                        <select name="inventories[@i].Category" class="form-select">
+                                @foreach (var category in categories)
+                                {
+                                    var isSelected = string.Equals(category.Value?.Trim(), Model[i].Category?.Trim(), StringComparison.OrdinalIgnoreCase);
+                                <option value="@category.Value" selected="@(isSelected ? "selected" : null)">
+                                        @category.Text
+                                </option>
+                                }
+                        </select>
+                    </td>
+
+                    
+                    <td>
+                        <input name="inventories[@i].ImageUrl" value="@Model[i].ImageUrl" class="form-control" />
+                    </td>
+                    <td class="text-center">
+                        <input type="hidden" name="inventories[@i].IsPublic" value="false" />
+                        <input name="inventories[@i].IsPublic" type="checkbox" class="form-check-input" value="true" @(Model[i].IsPublic ? "checked" : "") />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-primary">
+        <i class="fas fa-save me-1"></i> Сохранить изменения
+    </button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

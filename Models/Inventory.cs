@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CourseProjectitr.Models
 {
@@ -10,6 +11,10 @@ namespace CourseProjectitr.Models
 
         [Required(ErrorMessage = "Название обязательно")]
         public string Title { get; set; }
+
+        [NotMapped]
+        public string? TagsJson { get; set; }
+
 
         public string? Description { get; set; }
         public string? Category { get; set; }
@@ -21,5 +26,12 @@ namespace CourseProjectitr.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public ICollection<Tag> Tags { get; set; } = new List<Tag>();
+        public ICollection<Item> Items { get; set; } = new List<Item>();
+        public string? NumberPrefix { get; set; }
+
+
+
+
+
     }
 }

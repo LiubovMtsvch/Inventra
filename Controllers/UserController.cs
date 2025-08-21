@@ -52,7 +52,11 @@ public class UserController : Controller
                 IsPublic = i.IsPublic,
                 CreatedAt = i.CreatedAt,
                 OwnerName = i.OwnerName,
-                ImageUrl = i.ImageUrl
+                ImageUrl = i.ImageUrl,
+                Tags = i.Tags.ToList(),
+                //переименовать на айди предмета 
+                NumberPrefix = i.NumberPrefix
+
             })
             .ToListAsync();
 

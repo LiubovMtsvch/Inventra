@@ -1,0 +1,20 @@
+﻿@model List<CourseProjectitr.Models.Inventory>
+
+<h2>Удалить выбранные инвентаризации</h2>
+
+<ul>
+@foreach (var inv in Model)
+{
+    <li>@inv.Title</li>
+}
+</ul>
+
+<form asp-action="SelectDelete" method="post">
+    @Html.AntiForgeryToken()
+    @foreach (var inv in Model)
+    {
+        <input type="hidden" name="selectedIds" value="@inv.Id" />
+    }
+    <button type="submit" class="btn btn-danger">Удалить все</button>
+    <a asp-action="Dashboard" class="btn btn-secondary">Отмена</a>
+</form>

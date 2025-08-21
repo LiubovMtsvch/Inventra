@@ -9,7 +9,7 @@ namespace CourseProjectitr.Controllers
     {
         public IActionResult Index()
         {
-            return Redirect("/index.html");
+            return RedirectToAction("Index", "Home");
 
 
         }

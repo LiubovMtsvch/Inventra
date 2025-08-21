@@ -1,0 +1,18 @@
+﻿@model CourseProjectitr.Models.Inventory
+
+<h2>@Model.Title</h2>
+
+<p><strong>ID:</strong> @Model.NumberPrefix</p>
+<p><strong>Категория:</strong> @Model.Category</p>
+<p><strong>Публичная:</strong> @(Model.IsPublic ? "Да" : "Нет")</p>
+<p><strong>Владелец:</strong> @Model.OwnerName?</p>
+
+<h4>Теги:</h4>
+<ul>
+    @foreach (var tag in Model.Tags)
+    {
+        <li>@tag.Name</li>
+    }
+</ul>
+
+<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Редактировать</a>
