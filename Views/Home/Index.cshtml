@@ -1,4 +1,5 @@
-﻿@{
+﻿@model List<CourseProjectitr.Models.Inventory>
+@{
     ViewData["Title"] = "Welcome";
 }
 
@@ -6,7 +7,7 @@
     <h1>Welcome to Inventra</h1>
     <p class="tagline">Create your account to get started!</p>
 
-    <div class="social-login">
+    <div class="social-login mb-4">
         <a href="/Login/Login" class="social-btn" style="text-decoration: none">
             <span class="social-icon google-icon"></span>
             <span>Continue with Google</span>
@@ -19,4 +20,65 @@
     </div>
 </div>
 
+@if (Model != null && Model.Any())
+{
+   
 
+
+    <table class="table-clean table table-bordered table-striped table-hover align-middle text-start">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Tags</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var inv in Model)
+            {
+                <tr>
+                    <td>@inv.NumberPrefix</td>
+                    <td>
+                        <a asp-action="Details" asp-controller="Inventory" asp-route-id="@inv.Id" class="text-decoration-none fw-semibold">
+                            @inv.Title
+                        </a>
+                    </td>
+                    <td>@inv.Category</td>
+                    <td>
+                        @if (inv.Tags != null && inv.Tags.Any())
+                        {
+                            foreach (var tag in inv.Tags)
+                            {
+                                <span class="tag-pill">@tag.Name</span>
+                            }
+                        }
+                        else
+                        {
+                            <span class="text-muted">No tags</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="text-muted">Нет публичных инвентаризаций для отображения.</p>
+}
+
+@section Styles {
+    <style>
+        .section-heading {
+            font-size: 20px;
+            font-weight: 500;
+            color: #6c757d; /* Серо-синий, как в Bootstrap muted */
+            margin-bottom: 12px;
+            text-align: center;
+            letter-spacing: 0.2px;
+        }
+
+
+    </style>
+}

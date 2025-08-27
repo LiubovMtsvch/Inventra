@@ -24,7 +24,8 @@
       "launchBrowser": true,
       "launchUrl": "Home/Index",
 
-      "applicationUrl": "https://localhost:7001",
+      "applicationUrl": "https://localhost:7010",
+
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

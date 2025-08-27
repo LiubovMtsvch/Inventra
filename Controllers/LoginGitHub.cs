@@ -27,7 +27,8 @@ namespace CourseProjectitr.Controllers
             }
 
             var name = result.Principal?.Identities?.FirstOrDefault()?.FindFirst("urn:github:login")?.Value;
-            HttpContext.Session.SetString("GitHubUser", name ?? "Unknown");
+            HttpContext.Session.SetString("CurrentUserName", name ?? "Unknown");
+
 
             return RedirectToAction("Profile", "User");
         }

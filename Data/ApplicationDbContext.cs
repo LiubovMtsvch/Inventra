@@ -14,6 +14,7 @@ namespace CourseProjectitr.Data
         
         public DbSet<Inventory> Inventories { get; set; }
         public DbSet<Tag> Tags { get; set; }
+        public DbSet<InventoryPermission> InventoryPermissions { get; set; }
 
         public DbSet<Category> Categories { get; set; }
         public DbSet<Item> Items { get; set; }
@@ -36,8 +37,14 @@ namespace CourseProjectitr.Data
             .HasOne(i => i.Inventory)
             .WithMany(inv => inv.Items)
             .HasForeignKey(i => i.InventoryId)
-            .OnDelete(DeleteBehavior.Cascade); // или Restrict, если не хочешь каскадного удаления
+            .OnDelete(DeleteBehavior.Cascade);
 
+
+            modelBuilder.Entity<InventoryPermission>()
+            .HasOne(p => p.Inventory)
+            .WithMany(inv => inv.Permissions) // ← вот это важно!
+            .HasForeignKey(p => p.InventoryId)
+            .OnDelete(DeleteBehavior.Cascade);
 
 
         }

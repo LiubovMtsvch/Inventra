@@ -8,6 +8,7 @@ namespace CourseProjectitr.Models
     public class Inventory
     {
         public int Id { get; set; }
+        public string? OwnerEmail { get; set; }
 
         [Required(ErrorMessage = "Название обязательно")]
         public string Title { get; set; }
@@ -23,11 +24,14 @@ namespace CourseProjectitr.Models
 
         public string? OwnerId { get; set; }
         public string? OwnerName { get; set; }
+
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public ICollection<Tag> Tags { get; set; } = new List<Tag>();
         public ICollection<Item> Items { get; set; } = new List<Item>();
         public string? NumberPrefix { get; set; }
+        public ICollection<InventoryPermission> Permissions { get; set; } = new List<InventoryPermission>();
 
 
 

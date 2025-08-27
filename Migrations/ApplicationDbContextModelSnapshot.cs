@@ -65,6 +65,9 @@ namespace CourseProjectitr.Migrations
                     b.Property<string>("NumberPrefix")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("OwnerEmail")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("OwnerId")
                         .HasColumnType("nvarchar(max)");
 
@@ -78,6 +81,42 @@ namespace CourseProjectitr.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Inventories");
+                });
+
+            modelBuilder.Entity("CourseProjectitr.Models.InventoryPermission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("CanComment")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanEdit")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("InventoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("InventoryId1")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InventoryId");
+
+                    b.HasIndex("InventoryId1");
+
+                    b.ToTable("InventoryPermissions");
                 });
 
             modelBuilder.Entity("CourseProjectitr.Models.Tag", b =>
@@ -138,6 +177,21 @@ namespace CourseProjectitr.Migrations
                     b.ToTable("Items");
                 });
 
+            modelBuilder.Entity("CourseProjectitr.Models.InventoryPermission", b =>
+                {
+                    b.HasOne("CourseProjectitr.Models.Inventory", "Inventory")
+                        .WithMany()
+                        .HasForeignKey("InventoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CourseProjectitr.Models.Inventory", null)
+                        .WithMany("Permissions")
+                        .HasForeignKey("InventoryId1");
+
+                    b.Navigation("Inventory");
+                });
+
             modelBuilder.Entity("InventoryTag", b =>
                 {
                     b.HasOne("CourseProjectitr.Models.Inventory", null)
@@ -167,6 +221,8 @@ namespace CourseProjectitr.Migrations
             modelBuilder.Entity("CourseProjectitr.Models.Inventory", b =>
                 {
                     b.Navigation("Items");
+
+                    b.Navigation("Permissions");
                 });
 #pragma warning restore 612, 618
         }

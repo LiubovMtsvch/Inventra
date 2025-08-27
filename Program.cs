@@ -10,7 +10,13 @@ using Microsoft.EntityFrameworkCore;
 using CourseProjectitr.Data;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenLocalhost(7010, listenOptions =>
+    {
+        listenOptions.UseHttps();
+    });
+});
 //google
 builder.Services.AddAuthentication(options =>
 {
@@ -86,14 +92,14 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+
 app.UseStaticFiles();
-app.UseHttpsRedirection();
 app.UseSession();
+app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
 app.Run();

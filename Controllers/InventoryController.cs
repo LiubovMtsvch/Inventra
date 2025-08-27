@@ -86,9 +86,16 @@ public class InventoryController : Controller
         }
 
         // Остальные поля
-        model.OwnerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        model.OwnerName = User.Identity.Name;
+        model.OwnerName = HttpContext.Session.GetString("CurrentUserName") ?? "Unknown";
+
+        model.OwnerId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Google ID
+
         model.CreatedAt = DateTime.UtcNow;
+
+        model.OwnerEmail = User.FindFirstValue(ClaimTypes.Email)?? HttpContext.Session.GetString("CurrentUserEmail")?? "unknown@example.com";
+
+
+
 
         _context.Inventories.Add(model);
         await _context.SaveChangesAsync();
@@ -105,39 +112,24 @@ public class InventoryController : Controller
     }
 
 
-
-
-
-
-    //[HttpGet]
-    //public async Task<IActionResult> Delete(int id)
-    //{
-    //    var inventory = await _context.Inventories.FindAsync(id);
-
-
-    //    return View(inventory);
-    //}
-
-    //[HttpPost, ActionName("Delete")]
-    //public async Task<IActionResult> DeleteConfirmed(int id)
-    //{
-    //    var inventory = await _context.Inventories
-    //        .Include(i => i.Tags)
-    //        .FirstOrDefaultAsync(i => i.Id == id);
-
-    //    if (inventory == null)
-    //        return NotFound();
-
-    //    _context.Inventories.Remove(inventory);
-    //    await _context.SaveChangesAsync();
-
-    //    return RedirectToAction("Profile", "User");
-    //}
-
-  
-    [HttpGet]
-    public async Task<IActionResult> SelectDelete(List<int> ids)
+    public async Task<IActionResult> Details(int id)
     {
+        var inventory = await _context.Inventories
+            .Include(i => i.Tags)
+            .FirstOrDefaultAsync(i => i.Id == id);
+
+        if (inventory == null)
+            return NotFound();
+
+        return View(inventory);
+    }
+
+
+    [HttpGet]
+    public async Task<IActionResult> SelectDelete([FromQuery] List<int> ids)
+    {
+        Console.WriteLine("SelectDelete GET: " + string.Join(",", ids)); // ← добавь это
+
         var inventories = await _context.Inventories
             .Where(i => ids.Contains(i.Id))
             .ToListAsync();
@@ -145,12 +137,17 @@ public class InventoryController : Controller
         return View("Delete", inventories);
     }
 
+
     [HttpPost, ActionName("SelectDelete")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SelectDeleteConfirmed(List<int> selectedIds)
+
+
+    public async Task<IActionResult> SelectDeleteConfirmed(List<int> ids)
+
+
     {
         var inventories = await _context.Inventories
-            .Where(i => selectedIds.Contains(i.Id))
+            .Where(i => ids.Contains(i.Id))
             .ToListAsync();
 
         _context.Inventories.RemoveRange(inventories);
@@ -160,6 +157,7 @@ public class InventoryController : Controller
     }
 
 
+    [Authorize]
     public IActionResult Edit([FromQuery] List<int> ids)
     {
         if (ids == null || !ids.Any())

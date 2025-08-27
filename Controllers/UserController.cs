@@ -1,23 +1,52 @@
-﻿//using CourseProjectitr.Models.ViewModels;
+﻿
+//using System.Security.Claims;
+//using Microsoft.EntityFrameworkCore;
+//using CourseProjectitr.Data;
+//using CourseProjectitr.Models;
+//using CourseProjectitr.Models.ViewModels;
 //using Microsoft.AspNetCore.Authorization;
 //using Microsoft.AspNetCore.Mvc;
 
-//namespace CourseProjectitr.Controllers
+//public class UserController : Controller
 //{
-//    public class UserController : Controller
+//    private readonly ApplicationDbContext _context;
+
+//    public UserController(ApplicationDbContext context)
 //    {
-//        [Authorize]
-//        public IActionResult Profile()
-//        {
-//            var model = new DashboardViewModel
-//            {
-//                OwnedInventories = new List<InventorySummaryViewModel>(),
-//                EditableInventories = new List<InventorySummaryViewModel>()
-//            };
-//            return View(model);
-//        }
+//        _context = context;
 //    }
 
+//    [Authorize]
+//    public async Task<IActionResult> Profile()
+//    {
+//        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+//        var ownedInventories = await _context.Inventories
+//            .Where(i => i.OwnerId == userId)
+//            .Select(i => new InventorySummaryViewModel
+//            {
+//                Id = i.Id,
+//                Title = i.Title,
+//                Category = i.Category,
+//                Description = i.Description,
+//                IsPublic = i.IsPublic,
+//                CreatedAt = i.CreatedAt,
+//                OwnerName = i.OwnerName,
+//                ImageUrl = i.ImageUrl,
+//                Tags = i.Tags.ToList(),
+//                //переименовать на айди предмета 
+//                NumberPrefix = i.NumberPrefix
+
+//            })
+//            .ToListAsync();
+
+//        var model = new DashboardViewModel
+//        {
+//            OwnedInventories = ownedInventories
+//        };
+
+//        return View(model);
+//    }
 //}
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
@@ -41,30 +70,94 @@ public class UserController : Controller
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        var ownedInventories = await _context.Inventories
+        // 🟢 Получаем инвентаризации, которыми владеет пользователь
+        var ownedInventoriesRaw = await _context.Inventories
             .Where(i => i.OwnerId == userId)
-            .Select(i => new InventorySummaryViewModel
-            {
-                Id = i.Id,
-                Title = i.Title,
-                Category = i.Category,
-                Description = i.Description,
-                IsPublic = i.IsPublic,
-                CreatedAt = i.CreatedAt,
-                OwnerName = i.OwnerName,
-                ImageUrl = i.ImageUrl,
-                Tags = i.Tags.ToList(),
-                //переименовать на айди предмета 
-                NumberPrefix = i.NumberPrefix
-
-            })
+            .Include(i => i.Tags)
             .ToListAsync();
+
+        var ownedInventories = ownedInventoriesRaw
+            .Select(MapToSummary)
+            .ToList();
+
+        // 🔵 Получаем инвентаризации, к которым у пользователя есть права редактирования
+        var editablePermissions = await _context.InventoryPermissions
+            .Where(p => p.UserId == userId && p.CanEdit)
+            .Include(p => p.Inventory)
+                .ThenInclude(inv => inv.Tags)
+            .ToListAsync();
+
+        var editableInventories = editablePermissions
+            .Select(p => MapToSummary(p.Inventory))
+            .ToList();
+
+        // 🟡 Получаем все инвентаризации, к которым у пользователя есть доступ (любые права)
+        var accessiblePermissions = await _context.InventoryPermissions
+            .Where(p => p.UserId == userId)
+            .Include(p => p.Inventory)
+            .ToListAsync();
+
+        var accessibleInventories = accessiblePermissions
+            .Select(p => p.Inventory)
+            .ToList();
 
         var model = new DashboardViewModel
         {
-            OwnedInventories = ownedInventories
+            OwnedInventories = ownedInventories,
+            EditableInventories = editableInventories,
+            AccessibleInventories = accessibleInventories
         };
 
+
         return View(model);
+
+    }
+
+    [HttpGet("/api/users/search")]
+    public IActionResult SearchUsers(string query)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+            return Ok(new List<object>());
+
+        var loweredQuery = query.ToLower();
+
+        var users = _context.Inventories
+        .Where(i =>
+            (i.OwnerName != null && i.OwnerName.ToLower().Contains(loweredQuery)) ||
+            (i.OwnerEmail != null && i.OwnerEmail.ToLower().Contains(loweredQuery))
+        )
+        .GroupBy(i => i.OwnerEmail)
+        .Select(g => new {
+            id = g.First().OwnerId,
+            name = g.First().OwnerName,
+            email = g.Key
+        })
+        .Take(10)
+        .ToList();
+
+
+        return Ok(users);
+    }
+
+
+
+
+
+    // 🔧 Метод для маппинга Inventory → InventorySummaryViewModel
+    private InventorySummaryViewModel MapToSummary(Inventory inventory)
+    {
+        return new InventorySummaryViewModel
+        {
+            Id = inventory.Id,
+            Title = inventory.Title,
+            Category = inventory.Category,
+            Description = inventory.Description,
+            IsPublic = inventory.IsPublic,
+            CreatedAt = inventory.CreatedAt,
+            OwnerName = inventory.OwnerName,
+            ImageUrl = inventory.ImageUrl,
+            Tags = inventory.Tags?.ToList() ?? new List<Tag>(),
+            NumberPrefix = inventory.NumberPrefix
+        };
     }
 }

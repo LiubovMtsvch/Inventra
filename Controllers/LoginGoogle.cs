@@ -1,7 +1,8 @@
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Security.Claims;
 namespace CourseProjectitr.Controllers
 {
     
@@ -29,15 +30,18 @@ namespace CourseProjectitr.Controllers
         public async Task<IActionResult> GoogleResponse()
         {
             var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            var claims = result.Principal.Identities.FirstOrDefault().Claims.Select(claim => new
-            {
-                claim.Issuer,
-                claim.OriginalIssuer,
-                claim.Type,
-                claim.Value
-            });
-            //return Json(claims);
+
+            var name = result.Principal.FindFirstValue(System.Security.Claims.ClaimTypes.Name);
+            var email = result.Principal.FindFirstValue(System.Security.Claims.ClaimTypes.Email);
+
+            HttpContext.Session.SetString("CurrentUserName", name ?? email ?? "Unknown");
+
+            //
+            // var claims = result.Principal.Identities.FirstOrDefault()?.Claims.Select(c => new { c.Type, c.Value });
+            // return Json(claims);
+
             return RedirectToAction("Profile", "User", new { area = "" });
         }
+
     }
 }

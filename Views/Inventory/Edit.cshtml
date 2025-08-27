@@ -13,6 +13,7 @@
     <table class="table table-bordered align-middle text-center">
         <thead class="table-light">
             <tr>
+                <th><i class="fas fa-tag"></i> ID</th>
                 <th><i class="fas fa-tag"></i> Title</th>
                 <th><i class="fas fa-align-left"></i> Description</th>
                 <th><i class="fas fa-list"></i> Category</th>
@@ -24,6 +25,10 @@
             @for (int i = 0; i < Model.Count; i++)
             {
                 <tr>
+                    <td>
+                        <input name="inventories[@i].NumberPrefix" value="@Model[i].NumberPrefix" class="form-control" />
+                    </td>
+
                     <td>
                         <input type="hidden" name="inventories[@i].Id" value="@Model[i].Id" />
                         <input name="inventories[@i].Title" value="@Model[i].Title" class="form-control" />
@@ -42,7 +47,7 @@
                                 </option>
                                 }
                         </select>
-                    </td>
+                    </td>Q
 
                     
                     <td>

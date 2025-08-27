@@ -9,7 +9,7 @@
 <form asp-controller="Inventory" asp-action="Create" method="post">
 
     @Html.AntiForgeryToken()
-    <table class="table table-clean">
+    <table class="table-clean table table-bordered table-striped table-hover align-middle text-start">
         <thead class="table-light">
             <tr>
                 <th><i class="fas fa-align-left"></i> Title</th>
@@ -43,7 +43,6 @@
                     <input id="tag-input" name="Tags" class="form-control" placeholder="Select tags" />
                     <input type="hidden" id="TagsJson" name="TagsJson" />
 
-                    <div id="tag-preview" class="mt-2 text-start"></div>
                 </td>
 
 
@@ -64,15 +63,29 @@
     const input = document.querySelector('input[name=Tags]');
     const preview = document.getElementById('tag-preview');
 
+
+    const staticWhitelist = [
+        "computer", "telephone", "tv", "monitor", "keyboard",
+        "mouse", "printer", "scanner", "router", "modem"
+    ];
+
+    const mockAjax = (() => {
+        let timeout;
+        return function(duration) {
+            clearTimeout(timeout);
+            return new Promise(resolve => {
+                timeout = setTimeout(() => resolve(staticWhitelist), duration || 700);
+            });
+        };
+    })();
+
+  
     const tagify = new Tagify(input, {
         enforceWhitelist: false,
         delimiters: ",",
-        whitelist: [
-            "computer", "telephone", "tv", "monitor", "keyboard",
-            "mouse", "printer", "scanner", "router", "modem"
-        ],
+        whitelist: staticWhitelist,
         dropdown: {
-            enabled: 0,
+            enabled: 1, 
             maxItems: 10,
             classname: "tags-look",
             fuzzySearch: true,
@@ -80,38 +93,27 @@
             highlightFirst: true
         }
     });
-        tagify.on('add', function(e) {
-        const tagElm = e.detail.tag;
-        tagElm.removeAttribute('title');
+
+    // 🧹 удаление title у тега
+    tagify.on('add', e => {
+        e.detail.tag.removeAttribute('title');
     });
 
-    // 👇 сериализация тегов
-    tagify.on('change', function () {
-        const tags = tagify.value.map(t => t.value);
-        document.getElementById('TagsJson').value = JSON.stringify(tags);
+   
 
-        // 👇 отображение первых 4 тегов + намёк
-        preview.innerHTML = '';
-        const previewTags = tags.slice(0, 4);
-        previewTags.forEach(tag => {
-            const span = document.createElement('span');
-            span.className = 'tag-pill me-1';
-            span.textContent = tag;
-            preview.appendChild(span);
-        });
+    tagify.on('input', e => {
+        tagify.whitelist = null;
+        tagify.loading(true);
 
-        const remaining = tags.length - previewTags.length;
-        if (remaining > 0) {
-            const hint = document.createElement('span');
-            hint.className = 'tag-pill text-muted';
-            hint.textContent = `+${remaining} ещё`;
-            preview.appendChild(hint);
-        }
+        mockAjax().then(result => {
+            tagify.settings.whitelist = result.concat(tagify.value.map(t => t.value));
+            tagify.loading(false);
+            tagify.dropdown.show(e.detail.value);
+        }).catch(() => tagify.dropdown.hide());
     });
 
-    // 👇 показываем список при фокусе
-    input.addEventListener('focus', function () {
+
+    input.addEventListener('focus', () => {
         tagify.dropdown.show.call(tagify);
     });
-
 </script>
