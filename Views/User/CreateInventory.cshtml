@@ -78,22 +78,21 @@
         dropdown: { enabled: 1, maxItems: 10, classname: "tags-look", fuzzySearch: true, position: 'text', highlightFirst: true }
       });
 
-      // 2) Удаляем title у созданных тегов (не критично)
+
       tagify.on('add', e => e.detail.tag.removeAttribute('title'));
 
-      // 3) Всегда держим hidden в актуальном состоянии
+
       function syncHidden() {
         const tags = tagify.value.map(t => t.value);
         hidden.value = JSON.stringify(tags);
-        // Временный лог для проверки
+       
         console.log('TagsJson ->', hidden.value);
       }
       tagify.on('change', syncHidden);
       tagify.on('add', syncHidden);
       tagify.on('remove', syncHidden);
-      syncHidden(); // на случай, если теги предзаданы
+      syncHidden(); 
 
-      // 4) Перед submit гарантированно обновляем hidden
       form.addEventListener('submit', function () {
         syncHidden();
         console.log('Submitting with TagsJson:', hidden.value);
