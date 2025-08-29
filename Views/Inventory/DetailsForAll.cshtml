@@ -1,0 +1,49 @@
+﻿@model CourseProjectitr.Models.Inventory
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
+
+@{
+    var username = Context.Session.GetString("GitHubUser") ?? User.Identity?.Name ?? "Гость";
+}
+
+<h2 class="mb-4">Инвентарь: @Model.Title</h2>
+<div class="table-scroll">
+<table class="table-clean table table-bordered table-striped table-hover align-middle text-start">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Category</th>
+            <th>Owner</th>
+            <th>Public</th>
+            <th>Created At</th>
+            <th>Tags</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>@Model.NumberPrefix</td>
+            <td>@Model.Title</td>
+            <td class="wrap-text text-wrap">
+                @Html.Raw(string.Join("\u200B", Model.Description.ToCharArray()))
+            </td>
+            <td>@Model.Category</td>
+            <td class="wrap-text text-wrap">@Model.OwnerName</td>
+            <td>@(Model.IsPublic ? "Yes" : "No")</td>
+            <td>@Model.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+            <td class="wrap-text tag-cell">
+                <div class="tag-container">
+                    @foreach (var tag in Model.Tags)
+                    {
+                        <div class="wrap-text text-wrap">
+                            <span class="tag-pill">@tag.Name</span>
+                        </div>
+                    }
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</div>
+

@@ -1,7 +1,8 @@
 ﻿@model CourseProjectitr.Models.ViewModels.DashboardViewModel
 
 @{
-    var username = Context.Session.GetString("GitHubUser") ?? User.Identity?.Name ?? "Гость";
+    var username = Context.Session.GetString("CurrentUserName") ?? User.Identity?.Name ?? "Гость";
+
 }
 
 <h2>Welcome, @username!</h2>
@@ -94,7 +95,7 @@
         }
     </tbody>
 </table>
-
+<input id="tagInput" name="TagsJson" class="form-control" />
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {

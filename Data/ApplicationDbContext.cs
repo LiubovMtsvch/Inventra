@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using CourseProjectitr.Models; 
+using CourseProjectitr.Models;
 
 namespace CourseProjectitr.Data
 {
@@ -10,8 +10,8 @@ namespace CourseProjectitr.Data
         {
 
         }
-       
-        
+
+
         public DbSet<Inventory> Inventories { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<InventoryPermission> InventoryPermissions { get; set; }
@@ -20,15 +20,17 @@ namespace CourseProjectitr.Data
         public DbSet<Item> Items { get; set; }
 
 
-     
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-           
+
             modelBuilder.Entity<Inventory>()
             .HasMany(i => i.Tags)
-            .WithMany(t => t.Inventories);
+            .WithMany(t => t.Inventories)
+            .UsingEntity(j => j.ToTable("InventoryTag"));
+
 
 
 

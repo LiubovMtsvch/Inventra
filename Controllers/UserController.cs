@@ -1,54 +1,4 @@
-﻿
-//using System.Security.Claims;
-//using Microsoft.EntityFrameworkCore;
-//using CourseProjectitr.Data;
-//using CourseProjectitr.Models;
-//using CourseProjectitr.Models.ViewModels;
-//using Microsoft.AspNetCore.Authorization;
-//using Microsoft.AspNetCore.Mvc;
-
-//public class UserController : Controller
-//{
-//    private readonly ApplicationDbContext _context;
-
-//    public UserController(ApplicationDbContext context)
-//    {
-//        _context = context;
-//    }
-
-//    [Authorize]
-//    public async Task<IActionResult> Profile()
-//    {
-//        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-//        var ownedInventories = await _context.Inventories
-//            .Where(i => i.OwnerId == userId)
-//            .Select(i => new InventorySummaryViewModel
-//            {
-//                Id = i.Id,
-//                Title = i.Title,
-//                Category = i.Category,
-//                Description = i.Description,
-//                IsPublic = i.IsPublic,
-//                CreatedAt = i.CreatedAt,
-//                OwnerName = i.OwnerName,
-//                ImageUrl = i.ImageUrl,
-//                Tags = i.Tags.ToList(),
-//                //переименовать на айди предмета 
-//                NumberPrefix = i.NumberPrefix
-
-//            })
-//            .ToListAsync();
-
-//        var model = new DashboardViewModel
-//        {
-//            OwnedInventories = ownedInventories
-//        };
-
-//        return View(model);
-//    }
-//}
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using CourseProjectitr.Data;
 using CourseProjectitr.Models;
@@ -65,12 +15,12 @@ public class UserController : Controller
         _context = context;
     }
 
-    [Authorize]
+    
     public async Task<IActionResult> Profile()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        // 🟢 Получаем инвентаризации, которыми владеет пользователь
+   
         var ownedInventoriesRaw = await _context.Inventories
             .Where(i => i.OwnerId == userId)
             .Include(i => i.Tags)
@@ -80,7 +30,7 @@ public class UserController : Controller
             .Select(MapToSummary)
             .ToList();
 
-        // 🔵 Получаем инвентаризации, к которым у пользователя есть права редактирования
+     
         var editablePermissions = await _context.InventoryPermissions
             .Where(p => p.UserId == userId && p.CanEdit)
             .Include(p => p.Inventory)
@@ -91,7 +41,7 @@ public class UserController : Controller
             .Select(p => MapToSummary(p.Inventory))
             .ToList();
 
-        // 🟡 Получаем все инвентаризации, к которым у пользователя есть доступ (любые права)
+
         var accessiblePermissions = await _context.InventoryPermissions
             .Where(p => p.UserId == userId)
             .Include(p => p.Inventory)
@@ -159,5 +109,6 @@ public class UserController : Controller
             Tags = inventory.Tags?.ToList() ?? new List<Tag>(),
             NumberPrefix = inventory.NumberPrefix
         };
+
     }
 }

@@ -1,12 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using CourseProjectitr.Models;
 
-namespace CourseProjectitr.Models
+public class Tag
 {
-    public class Tag
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-
-        public ICollection<Inventory> Inventories { get; set; } = new List<Inventory>();
-    }
+    public int Id { get; set; }
+    public string Name { get; set; } // ← это должно быть
+    public ICollection<Inventory> Inventories { get; set; } = new List<Inventory>();
 }

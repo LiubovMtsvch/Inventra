@@ -47,7 +47,6 @@ public class InventoryController : Controller
         return View("~/Views/User/CreateInventory.cshtml");
     }
 
-    // POST: Inventory/Create
     [HttpPost]
     public async Task<IActionResult> Create(Inventory model)
     {
@@ -60,48 +59,46 @@ public class InventoryController : Controller
             return Content("Ошибки: " + string.Join(", ", errors));
         }
 
- 
         model.NumberPrefix = await GenerateNumberPrefix();
+        model.OwnerName = HttpContext.Session.GetString("CurrentUserName") ?? "Unknown";
+        model.OwnerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        model.CreatedAt = DateTime.UtcNow;
+        model.OwnerEmail = User.FindFirstValue(ClaimTypes.Email) ?? HttpContext.Session.GetString("CurrentUserEmail") ?? "unknown@example.com";
 
-        
+        // ✅ Обрабатываем теги до сохранения
         if (!string.IsNullOrEmpty(model.TagsJson))
         {
             var tagNames = JsonSerializer.Deserialize<List<string>>(model.TagsJson);
-            model.Tags = new List<Tag>();
+            var tags = new List<Tag>();
 
             foreach (var name in tagNames)
             {
                 var existingTag = await _context.Tags.FirstOrDefaultAsync(t => t.Name == name);
-
                 if (existingTag != null)
                 {
-                    model.Tags.Add(existingTag);
+                    tags.Add(existingTag);
                 }
                 else
                 {
                     var newTag = new Tag { Name = name };
-                    model.Tags.Add(newTag);
+                    _context.Tags.Add(newTag);
+                    await _context.SaveChangesAsync(); // сохранить новый тег
+                    tags.Add(newTag);
                 }
             }
+
+            model.Tags = tags;
         }
 
-        // Остальные поля
-        model.OwnerName = HttpContext.Session.GetString("CurrentUserName") ?? "Unknown";
 
-        model.OwnerId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Google ID
-
-        model.CreatedAt = DateTime.UtcNow;
-
-        model.OwnerEmail = User.FindFirstValue(ClaimTypes.Email)?? HttpContext.Session.GetString("CurrentUserEmail")?? "unknown@example.com";
-
-
-
-
+        // 📌 Сохраняем инвентаризацию
         _context.Inventories.Add(model);
         await _context.SaveChangesAsync();
 
         return RedirectToAction("Profile", "User");
     }
+
+ 
 
     // Метод генерации NumberPrefix
     private async Task<string> GenerateNumberPrefix()
@@ -111,7 +108,7 @@ public class InventoryController : Controller
         return $"INV-{year}-{count + 1:D3}";
     }
 
-
+    [Authorize]
     public async Task<IActionResult> Details(int id)
     {
         var inventory = await _context.Inventories
@@ -122,6 +119,19 @@ public class InventoryController : Controller
             return NotFound();
 
         return View(inventory);
+    }
+
+    [AllowAnonymous]
+    public async Task<IActionResult> DetailsForAll(int id)
+    {
+        var inventory = await _context.Inventories
+            .Include(i => i.Tags)
+            .FirstOrDefaultAsync(i => i.Id == id);
+
+        if (inventory == null || !inventory.IsPublic)
+            return NotFound(); // или RedirectToAction("Login", "User")
+
+        return View("DetailsForAll", inventory);
     }
 
 

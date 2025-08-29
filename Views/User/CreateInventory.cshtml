@@ -8,6 +8,7 @@
 
 <form asp-controller="Inventory" asp-action="Create" method="post">
 
+
     @Html.AntiForgeryToken()
     <table class="table-clean table table-bordered table-striped table-hover align-middle text-start">
         <thead class="table-light">
@@ -59,61 +60,43 @@
 </form>
 
 
+
 <script>
-    const input = document.querySelector('input[name=Tags]');
-    const preview = document.getElementById('tag-preview');
+    document.addEventListener('DOMContentLoaded', function () {
+      const form = document.getElementById('inventory-create-form');
+      const input = document.getElementById('tag-input');
+      const hidden = document.getElementById('TagsJson');
 
-
-    const staticWhitelist = [
-        "computer", "telephone", "tv", "monitor", "keyboard",
-        "mouse", "printer", "scanner", "router", "modem"
-    ];
-
-    const mockAjax = (() => {
-        let timeout;
-        return function(duration) {
-            clearTimeout(timeout);
-            return new Promise(resolve => {
-                timeout = setTimeout(() => resolve(staticWhitelist), duration || 700);
-            });
-        };
-    })();
-
-  
-    const tagify = new Tagify(input, {
+      // 1) Инициализация Tagify строго по id
+      const tagify = new Tagify(input, {
         enforceWhitelist: false,
         delimiters: ",",
-        whitelist: staticWhitelist,
-        dropdown: {
-            enabled: 1, 
-            maxItems: 10,
-            classname: "tags-look",
-            fuzzySearch: true,
-            position: 'text',
-            highlightFirst: true
-        }
-    });
+        whitelist: [
+          "computer", "telephone", "tv", "monitor", "keyboard",
+          "mouse", "printer", "scanner", "router", "modem"
+        ],
+        dropdown: { enabled: 1, maxItems: 10, classname: "tags-look", fuzzySearch: true, position: 'text', highlightFirst: true }
+      });
 
-    // 🧹 удаление title у тега
-    tagify.on('add', e => {
-        e.detail.tag.removeAttribute('title');
-    });
+      // 2) Удаляем title у созданных тегов (не критично)
+      tagify.on('add', e => e.detail.tag.removeAttribute('title'));
 
-   
+      // 3) Всегда держим hidden в актуальном состоянии
+      function syncHidden() {
+        const tags = tagify.value.map(t => t.value);
+        hidden.value = JSON.stringify(tags);
+        // Временный лог для проверки
+        console.log('TagsJson ->', hidden.value);
+      }
+      tagify.on('change', syncHidden);
+      tagify.on('add', syncHidden);
+      tagify.on('remove', syncHidden);
+      syncHidden(); // на случай, если теги предзаданы
 
-    tagify.on('input', e => {
-        tagify.whitelist = null;
-        tagify.loading(true);
-
-        mockAjax().then(result => {
-            tagify.settings.whitelist = result.concat(tagify.value.map(t => t.value));
-            tagify.loading(false);
-            tagify.dropdown.show(e.detail.value);
-        }).catch(() => tagify.dropdown.hide());
-    });
-
-
-    input.addEventListener('focus', () => {
-        tagify.dropdown.show.call(tagify);
+      // 4) Перед submit гарантированно обновляем hidden
+      form.addEventListener('submit', function () {
+        syncHidden();
+        console.log('Submitting with TagsJson:', hidden.value);
+      });
     });
 </script>
