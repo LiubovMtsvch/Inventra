@@ -1,4 +1,6 @@
-﻿namespace CourseProjectitr.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace CourseProjectitr.Models
 {
     public class InventoryPermission
     {
@@ -6,8 +8,8 @@
 
         public int InventoryId { get; set; }
         public Inventory Inventory { get; set; }
-
-        public string UserId { get; set; }  // ID пользователя, которому дали доступ
+        [Required]
+        public string UserId { get; set; } 
 
         public bool CanEdit { get; set; } = false;
         public bool CanComment { get; set; } = false;

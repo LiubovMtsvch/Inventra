@@ -20,7 +20,7 @@ html, body {
 }
 
 /* Применяем шрифт ко всем базовым элементам */
-h1, h2, h3, h4, h5, h6,
+h1, h2, h3, h4, h5, h6, p,
 table, th, td,
 input, button, a, label, select, textarea {
     font-family: inherit;
@@ -235,6 +235,25 @@ input, button, a, label, select, textarea {
     background-color: #f6f6f6;
 }
 
+.scroll-table-wrapper {
+    max-height: 400px; 
+    overflow-y: auto;
+    overflow-x: auto;
+    border: 1px solid #ccc;
+    margin-bottom: 20px;
+}
+
+.scroll-table-wrapper table {
+    min-width: 1000px; 
+}
+
+.scroll-table-wrapper thead th {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa;
+    z-index: 2;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
 
 
 .table-clean tr:hover td {

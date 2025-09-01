@@ -25,17 +25,30 @@ public class ItemController : Controller
         return RedirectToAction("Details", "Inventory", new { id = model.InventoryId });
     }
 
+    //private async Task<string> GenerateInventoryNumber(int inventoryId)
+    //{
+    //    var count = await _context.Items
+    //    .Where(i => i.InventoryId == inventoryId)
+    //    .CountAsync();
+
+
+
+    //    var prefix = ""; 
+    //    var year = DateTime.UtcNow.Year;
+
+    //    return $"{prefix}-{year}-{count + 1:D3}";
+    //}
     private async Task<string> GenerateInventoryNumber(int inventoryId)
     {
-        var count = await _context.Items
-        .Where(i => i.InventoryId == inventoryId)
-        .CountAsync();
+        var random = new Random();
 
+        string letters = new string(Enumerable.Range(0, 2)
+            .Select(_ => (char)random.Next('A', 'Z' + 1))
+            .ToArray());
 
+        int digits = random.Next(0, 1000);
 
-        var prefix = "INV"; // Можно сделать настраиваемым
-        var year = DateTime.UtcNow.Year;
-
-        return $"{prefix}-{year}-{count + 1:D3}";
+        return $"{letters}_{digits:D3}";
     }
+
 }

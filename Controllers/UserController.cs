@@ -80,8 +80,10 @@ public class UserController : Controller
         .Select(g => new {
             id = g.First().OwnerId,
             name = g.First().OwnerName,
-            email = g.Key
+            email = g.Key,
+            value = $"{g.First().OwnerName} ({g.Key})"
         })
+
         .Take(10)
         .ToList();
 

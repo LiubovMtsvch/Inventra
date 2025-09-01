@@ -15,9 +15,9 @@ namespace CourseProjectitr.Models.ViewModels
         public string OwnerName { get; set; }
         public DateTime CreatedAt { get; set; }
         public string? ImageUrl { get; set; }
-        //������������� �� ���� �������� 
-        public string NumberPrefix { get; set; }
 
+        public string NumberPrefix { get; set; }
+        public bool CanEdit { get; set; }
 
     }
 }

@@ -97,23 +97,80 @@ public class InventoryController : Controller
 
         return RedirectToAction("Profile", "User");
     }
-
- 
-
-    // Метод генерации NumberPrefix
+    //private async Task<string> GenerateNumberPrefix()
+    //{
+    //    var count = await _context.Inventories.CountAsync();
+    //    var year = DateTime.UtcNow.Year;
+    //    return $"INV-{year}-{count + 1:D3}";
+    //}
     private async Task<string> GenerateNumberPrefix()
     {
-        var count = await _context.Inventories.CountAsync();
-        var year = DateTime.UtcNow.Year;
-        return $"INV-{year}-{count + 1:D3}";
+        var random = new Random();
+
+        // Две случайные заглавные буквы
+        string letters = new string(Enumerable.Range(0, 2)
+            .Select(_ => (char)random.Next('A', 'Z' + 1))
+            .ToArray());
+
+        // Три случайные цифры от 000 до 999
+        int digits = random.Next(0, 1000);
+
+        return $"{letters}_{digits:D3}";
     }
+
+
+    private async Task<string> GenerateItemNumber(int inventoryId)
+    {
+        var count = await _context.Items.CountAsync(i => i.InventoryId == inventoryId);
+        return $"ITEM-{inventoryId}-{count + 1:D3}";
+    }
+
+
+    public IActionResult AddItem(int id)
+    {
+        var inventory = _context.Inventories.Find(id);
+        if (inventory == null) return NotFound();
+
+        var viewModel = new InventoryItemViewModel
+        {
+            InventoryId = inventory.Id,
+            InventoryTitle = inventory.Title
+        };
+
+        return View(viewModel);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddItem(InventoryItemViewModel model)
+    {
+        if (!ModelState.IsValid) return View(model);
+
+        var item = new Item
+        {
+            Title = model.Title,
+            InventoryNumber = model.InventoryNumber,
+            InventoryId = model.InventoryId
+        };
+
+        _context.Items.Add(item);
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction("Details", new { id = model.InventoryId });
+    }
+
+
+
+    // Метод генерации NumberPrefix
 
     [Authorize]
     public async Task<IActionResult> Details(int id)
     {
         var inventory = await _context.Inventories
-            .Include(i => i.Tags)
-            .FirstOrDefaultAsync(i => i.Id == id);
+        .Include(i => i.Tags)
+        .Include(i => i.Items) // 👈 обязательно!
+        .FirstOrDefaultAsync(i => i.Id == id);
+
 
         if (inventory == null)
             return NotFound();

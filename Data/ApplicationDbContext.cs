@@ -15,9 +15,11 @@ namespace CourseProjectitr.Data
         public DbSet<Inventory> Inventories { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<InventoryPermission> InventoryPermissions { get; set; }
+        public DbSet<InventoryField> InventoryFields { get; set; }
+        public DbSet<Item> Items { get; set; }
+        public DbSet<ItemFieldValue> ItemFieldValues { get; set; }
 
         public DbSet<Category> Categories { get; set; }
-        public DbSet<Item> Items { get; set; }
 
 
 

@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Welcome";
     var query = Context.Request.Query["query"].ToString();
+     var username = Context.Session.GetString("CurrentUserName") ?? User.Identity?.Name ?? "Гость";
 }
 
 

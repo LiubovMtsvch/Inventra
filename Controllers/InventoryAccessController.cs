@@ -17,30 +17,39 @@ namespace CourseProjectitr.Controllers
             _context = context;
         }
 
+
+
         [HttpPost]
-   
         public async Task<IActionResult> GrantAccess(int inventoryId, string userIds, bool canEdit, bool canComment)
         {
-            var parsedIds = JsonSerializer.Deserialize<List<string>>(userIds);
-            if (parsedIds == null || !parsedIds.Any())
-                return BadRequest("Не выбраны пользователи");
+
+            if (!await IsInventoryOwnerAsync(inventoryId))
+                return RedirectToAction("Details", "Inventory", new { id = inventoryId });
+
+            var parsedIds = JsonSerializer.Deserialize<List<string>>(userIds ?? "[]");
+
+            if (parsedIds.Count == 0)
+            {
+                TempData["AccessMessage"] = "No users were selected.";
+                TempData["AccessMessageType"] = "error";
+
+                return RedirectToAction("Details", "Inventory", new { id = inventoryId });
+            }
 
             foreach (var userId in parsedIds)
-            {
-                var permission = new InventoryPermission
+                _context.InventoryPermissions.Add(new InventoryPermission
                 {
                     InventoryId = inventoryId,
                     UserId = userId,
                     CanEdit = canEdit,
                     CanComment = canComment
-                };
-                _context.InventoryPermissions.Add(permission);
-            }
+                });
 
             await _context.SaveChangesAsync();
-            return Ok("Доступ выдан");
+            TempData["AccessMessage"] = "Access granted successfully.";
+            TempData["AccessMessageType"] = "success";
+            return RedirectToAction("Details", "Inventory", new { id = inventoryId });
         }
-
 
         [HttpPost]
         public async Task<IActionResult> RevokeAccess(int inventoryId, string userId)
@@ -68,6 +77,15 @@ namespace CourseProjectitr.Controllers
 
             return Ok(editableInventories);
         }
+
+        private async Task<bool> IsInventoryOwnerAsync(int inventoryId)
+        {
+            var inventory = await _context.Inventories
+                .FirstOrDefaultAsync(i => i.Id == inventoryId);
+
+            return inventory != null && inventory.OwnerId == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        }
+
 
     }
 

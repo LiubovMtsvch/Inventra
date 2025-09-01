@@ -29,20 +29,13 @@ namespace CourseProjectitr.Models
         public string? OwnerId { get; set; }
         public string? OwnerName { get; set; }
 
-      
-
-      
-
-
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public ICollection<Tag> Tags { get; set; } = new List<Tag>();
         public ICollection<Item> Items { get; set; } = new List<Item>();
         public string? NumberPrefix { get; set; }
         public ICollection<InventoryPermission> Permissions { get; set; } = new List<InventoryPermission>();
-
-
-
+        public ICollection<InventoryField> InventoryFields { get; set; } = new List<InventoryField>();
 
 
     }

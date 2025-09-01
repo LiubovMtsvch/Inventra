@@ -4,7 +4,7 @@
     Layout = "_Layout";
 }
 
-<h2 class="mb-4"><i class="fas fa-boxes-stacked me-2"></i>Создание инвентаризации</h2>
+<h2 class="mb-4">Create inventory</h2>
 
 <form asp-controller="Inventory" asp-action="Create" method="post">
 
@@ -13,12 +13,11 @@
     <table class="table-clean table table-bordered table-striped table-hover align-middle text-start">
         <thead class="table-light">
             <tr>
-                <th><i class="fas fa-align-left"></i> Title</th>
-                <th><i class="fas fa-align-left"></i> Description</th>
-                <th><i class="fas fa-list"></i> Category</th>
-                <th><i class="fas fa-image"></i> Image URL</th>
-                <th><i class="fas fa-align-left"></i> Tag</th>
-                <th><i class="fas fa-eye"></i> Make public</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Tags</th>
+                <th>Make public</th>
             </tr>
         </thead>
         <tbody>
@@ -38,9 +37,6 @@
 
                 </td>
                 <td>
-                    <input asp-for="ImageUrl" class="form-control" />
-                </td>
-                <td>
                     <input id="tag-input" name="Tags" class="form-control" placeholder="Select tags" />
                     <input type="hidden" id="TagsJson" name="TagsJson" />
 
@@ -53,10 +49,8 @@
             </tr>
         </tbody>
     </table>
+    <button type="submit" class="button-13">Save inventory</button>
 
-    <button type="submit" class="btn btn-success">
-        <i class="fas fa-save me-1"></i> Сохранить инвентаризацию
-    </button>
 </form>
 
 
@@ -67,7 +61,7 @@
       const input = document.getElementById('tag-input');
       const hidden = document.getElementById('TagsJson');
 
-      // 1) Инициализация Tagify строго по id
+
       const tagify = new Tagify(input, {
         enforceWhitelist: false,
         delimiters: ",",
