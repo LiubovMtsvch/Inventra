@@ -20,7 +20,7 @@ html, body {
 }
 
 /* Применяем шрифт ко всем базовым элементам */
-h1, h2, h3, h4, h5, h6, p,
+h1, h2, h3, h4, h5, h6,
 table, th, td,
 input, button, a, label, select, textarea {
     font-family: inherit;
@@ -112,6 +112,7 @@ input, button, a, label, select, textarea {
     color: #666;
     margin-bottom: 0.5rem;
 }
+
 .search-btn {
     background: #ffffff; /* 👈 белая кнопка */
     border: 1px solid #ccc;
@@ -168,44 +169,44 @@ input, button, a, label, select, textarea {
     border: 1px solid #ced4da;
 }
 
-.table-clean th,
-.table-clean td {
-    padding: 8px;
-    vertical-align: top;
-    border: 1px solid #dee2e6;
-    text-align: left;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
+    .table-clean th,
+    .table-clean td {
+        padding: 8px;
+        vertical-align: top;
+        border: 1px solid #dee2e6;
+        text-align: left;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 
-/* 👇 Равномерно делим ширину на 8 столбцов */
-.table-clean th:nth-child(1),
-.table-clean td:nth-child(1),
-.table-clean th:nth-child(2),
-.table-clean td:nth-child(2),
-.table-clean th:nth-child(3),
-.table-clean td:nth-child(3),
-.table-clean th:nth-child(4),
-.table-clean td:nth-child(4),
-.table-clean th:nth-child(5),
-.table-clean td:nth-child(5),
-.table-clean th:nth-child(6),
-.table-clean td:nth-child(6),
-.table-clean th:nth-child(7),
-.table-clean td:nth-child(7),
-.table-clean th:nth-child(8),
-.table-clean td:nth-child(8) {
-    width: 12.5%;
-}
+        /* 👇 Равномерно делим ширину на 8 столбцов */
+        .table-clean th:nth-child(1),
+        .table-clean td:nth-child(1),
+        .table-clean th:nth-child(2),
+        .table-clean td:nth-child(2),
+        .table-clean th:nth-child(3),
+        .table-clean td:nth-child(3),
+        .table-clean th:nth-child(4),
+        .table-clean td:nth-child(4),
+        .table-clean th:nth-child(5),
+        .table-clean td:nth-child(5),
+        .table-clean th:nth-child(6),
+        .table-clean td:nth-child(6),
+        .table-clean th:nth-child(7),
+        .table-clean td:nth-child(7),
+        .table-clean th:nth-child(8),
+        .table-clean td:nth-child(8) {
+            width: 12.5%;
+        }
 
-/* 👇 Для Description и Tags — разрешаем перенос */
-.table-clean td.wrap-text,
-.table-clean td.tag-cell {
-    white-space: normal;
-    word-break: break-word;
-    overflow-wrap: break-word;
-}
+        /* 👇 Для Description и Tags — разрешаем перенос */
+        .table-clean td.wrap-text,
+        .table-clean td.tag-cell {
+            white-space: normal;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
 
 
 .search-btn:hover {
@@ -235,25 +236,6 @@ input, button, a, label, select, textarea {
     background-color: #f6f6f6;
 }
 
-.scroll-table-wrapper {
-    max-height: 400px; 
-    overflow-y: auto;
-    overflow-x: auto;
-    border: 1px solid #ccc;
-    margin-bottom: 20px;
-}
-
-.scroll-table-wrapper table {
-    min-width: 1000px; 
-}
-
-.scroll-table-wrapper thead th {
-    position: sticky;
-    top: 0;
-    background-color: #f8f9fa;
-    z-index: 2;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-}
 
 
 .table-clean tr:hover td {
@@ -268,10 +250,10 @@ a.fw-semibold {
     transition: border-color 0.2s ease, color 0.2s ease;
 }
 
-a.fw-semibold:hover {
-    color: #0d6efd;
-    border-bottom: 1px solid rgba(13, 110, 253, 0.6);
-}
+    a.fw-semibold:hover {
+        color: #0d6efd;
+        border-bottom: 1px solid rgba(13, 110, 253, 0.6);
+    }
 
 .table-scroll {
     overflow-x: auto;
@@ -279,9 +261,9 @@ a.fw-semibold:hover {
     -webkit-overflow-scrolling: touch;
 }
 
-.table-scroll table {
-    min-width: 800px; /* или больше, если нужно */
-}
+    .table-scroll table {
+        min-width: 800px; /* или больше, если нужно */
+    }
 
 /* === Кнопка Amazon-style для тулбара === */
 .button-13 {
@@ -308,15 +290,15 @@ a.fw-semibold:hover {
     transition: background-color 0.2s ease;
 }
 
-.button-13:hover {
-    background-color: #f7fafa;
-}
+    .button-13:hover {
+        background-color: #f7fafa;
+    }
 
-.button-13:focus {
-    border-color: #008296;
-    box-shadow: rgba(213, 217, 217, .5) 0 2px 5px 0;
-    outline: 0;
-}
+    .button-13:focus {
+        border-color: #008296;
+        box-shadow: rgba(213, 217, 217, .5) 0 2px 5px 0;
+        outline: 0;
+    }
 
 .access-panel {
     font-family: 'Inter', sans-serif;
@@ -329,64 +311,64 @@ a.fw-semibold:hover {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.access-panel h4 {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 20px;
-    color: #212529;
-}
+    .access-panel h4 {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: #212529;
+    }
 
-.access-panel .info-line {
-    font-size: 14px;
-    color: #555;
-    margin-bottom: 16px;
-}
+    .access-panel .info-line {
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 16px;
+    }
 
-.access-panel .form-group {
-    margin-bottom: 16px;
-}
+    .access-panel .form-group {
+        margin-bottom: 16px;
+    }
 
-.access-panel label {
-    display: block;
-    font-weight: 500;
-    margin-bottom: 6px;
-    color: #333;
-}
+    .access-panel label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 6px;
+        color: #333;
+    }
 
-.access-panel input[type="text"] {
-    width: 100%;
-    padding: 10px 12px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    transition: border-color 0.2s ease;
-    font-family: 'Inter', sans-serif;
-}
+    .access-panel input[type="text"] {
+        width: 100%;
+        padding: 10px 12px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        transition: border-color 0.2s ease;
+        font-family: 'Inter', sans-serif;
+    }
 
-.access-panel input[type="text"]:focus {
-    border-color: #007bff;
-    outline: none;
-}
+        .access-panel input[type="text"]:focus {
+            border-color: #007bff;
+            outline: none;
+        }
 
-.access-panel .form-check {
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
+    .access-panel .form-check {
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
 
-.access-panel .form-check input[type="checkbox"] {
-    margin: 0;
-}
+        .access-panel .form-check input[type="checkbox"] {
+            margin: 0;
+        }
 
-.access-panel .form-check label {
-    font-weight: 500;
-    color: #444;
-}
+        .access-panel .form-check label {
+            font-weight: 500;
+            color: #444;
+        }
 
-.access-panel .action-note {
-    margin-top: 16px;
-    font-size: 13px;
-    color: #666;
-    font-style: italic;
-}
+    .access-panel .action-note {
+        margin-top: 16px;
+        font-size: 13px;
+        color: #666;
+        font-style: italic;
+    }
