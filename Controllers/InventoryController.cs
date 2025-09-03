@@ -119,11 +119,11 @@ public class InventoryController : Controller
     }
 
 
-    private async Task<string> GenerateItemNumber(int inventoryId)
-    {
-        var count = await _context.Items.CountAsync(i => i.InventoryId == inventoryId);
-        return $"ITEM-{inventoryId}-{count + 1:D3}";
-    }
+    //private async Task<string> GenerateItemNumber(int inventoryId)
+    //{
+    //    var count = await _context.Items.CountAsync(i => i.InventoryId == inventoryId);
+    //    return $"ITEM-{inventoryId}-{count + 1:D3}";
+    //}
 
 
     public IActionResult AddItem(int id)
@@ -140,24 +140,24 @@ public class InventoryController : Controller
         return View(viewModel);
     }
 
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddItem(InventoryItemViewModel model)
-    {
-        if (!ModelState.IsValid) return View(model);
+    //[HttpPost]
+    //[ValidateAntiForgeryToken]
+    //public async Task<IActionResult> AddItem(InventoryItemViewModel model)
+    //{
+    //    if (!ModelState.IsValid) return View(model);
 
-        var item = new Item
-        {
-            Title = model.Title,
-            InventoryNumber = model.InventoryNumber,
-            InventoryId = model.InventoryId
-        };
+    //    var item = new Item
+    //    {
+    //        Title = model.Title,
+    //        InventoryNumber = model.InventoryNumber,
+    //        InventoryId = model.InventoryId
+    //    };
 
-        _context.Items.Add(item);
-        await _context.SaveChangesAsync();
+    //    _context.Items.Add(item);
+    //    await _context.SaveChangesAsync();
 
-        return RedirectToAction("Details", new { id = model.InventoryId });
-    }
+    //    return RedirectToAction("Details", new { id = model.InventoryId });
+    //}
 
 
 
@@ -168,7 +168,7 @@ public class InventoryController : Controller
     {
         var inventory = await _context.Inventories
         .Include(i => i.Tags)
-        .Include(i => i.Items) // 👈 обязательно!
+        //.Include(i => i.Items) 
         .FirstOrDefaultAsync(i => i.Id == id);
 
 
@@ -195,7 +195,7 @@ public class InventoryController : Controller
     [HttpGet]
     public async Task<IActionResult> SelectDelete([FromQuery] List<int> ids)
     {
-        Console.WriteLine("SelectDelete GET: " + string.Join(",", ids)); // ← добавь это
+        Console.WriteLine("SelectDelete GET: " + string.Join(",", ids)); 
 
         var inventories = await _context.Inventories
             .Where(i => ids.Contains(i.Id))

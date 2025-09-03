@@ -12,18 +12,18 @@ public class ItemController : Controller
         _context = context;
     }
 
-    public async Task<IActionResult> Create(Item model)
-    {
-        if (!ModelState.IsValid)
-            return View(model);
+    //public async Task<IActionResult> Create(Item model)
+    //{
+    //    if (!ModelState.IsValid)
+    //        return View(model);
 
-        model.InventoryNumber = await GenerateInventoryNumber(model.InventoryId);
+    //    model.InventoryNumber = await GenerateInventoryNumber(model.InventoryId);
 
-        _context.Items.Add(model);
-        await _context.SaveChangesAsync();
+    //    _context.Items.Add(model);
+    //    await _context.SaveChangesAsync();
 
-        return RedirectToAction("Details", "Inventory", new { id = model.InventoryId });
-    }
+    //    return RedirectToAction("Details", "Inventory", new { id = model.InventoryId });
+    //}
 
     //private async Task<string> GenerateInventoryNumber(int inventoryId)
     //{

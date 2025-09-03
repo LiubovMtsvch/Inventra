@@ -34,7 +34,7 @@ namespace CourseProjectitr.Controllers
                 .OrderByDescending(i => i.CreatedAt)
                 .ToListAsync();
 
-            return View(inventories); // уже отфильтрованный список
+            return View(inventories); 
         }
 
 

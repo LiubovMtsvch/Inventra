@@ -31,12 +31,12 @@ namespace CourseProjectitr.Data
             modelBuilder.Entity<Inventory>()
             .HasMany(i => i.Tags)
             .WithMany(t => t.Inventories)
-            .UsingEntity(j => j.ToTable("InventoryTag"));
+            .UsingEntity(j =>
+                j.ToTable("InventoryTag") 
+            );
 
 
 
-
-            //
             modelBuilder.Entity<Item>()
             .HasOne(i => i.Inventory)
             .WithMany(inv => inv.Items)
@@ -46,9 +46,15 @@ namespace CourseProjectitr.Data
 
             modelBuilder.Entity<InventoryPermission>()
             .HasOne(p => p.Inventory)
-            .WithMany(inv => inv.Permissions) // ← вот это важно!
+            .WithMany(inv => inv.Permissions) 
             .HasForeignKey(p => p.InventoryId)
             .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ItemFieldValue>()
+             .HasOne(v => v.Item)
+             .WithMany(i => i.FieldValues)
+             .HasForeignKey(v => v.ItemId)
+             .OnDelete(DeleteBehavior.Restrict);
 
 
         }

@@ -94,8 +94,6 @@ public class UserController : Controller
 
 
 
-
-    // 🔧 Метод для маппинга Inventory → InventorySummaryViewModel
     private InventorySummaryViewModel MapToSummary(Inventory inventory)
     {
         return new InventorySummaryViewModel

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseProjectitr.Controllers
 {
-    public class ItemController : Controller // ← обязательно наследуем от Controller
+    public class ItemController : Controller
     {
         private readonly ApplicationDbContext _context;
 
@@ -38,7 +38,7 @@ namespace CourseProjectitr.Controllers
         {
             if (!ModelState.IsValid)
             {
-                
+
                 model.InventoryFields = _context.InventoryFields
                     .Where(f => f.InventoryId == model.InventoryId)
                     .ToList();
@@ -54,7 +54,7 @@ namespace CourseProjectitr.Controllers
             };
 
             _context.Items.Add(item);
-            _context.SaveChanges(); // получаем item.Id
+            _context.SaveChanges(); 
 
             foreach (var kvp in model.FieldValues)
             {
@@ -71,5 +71,31 @@ namespace CourseProjectitr.Controllers
 
             return RedirectToAction("Details", "Inventory", new { id = model.InventoryId });
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var item = await _context.Items
+                .Include(i => i.FieldValues)
+                .FirstOrDefaultAsync(i => i.Id == id);
+
+            if (item == null)
+                return NotFound();
+
+            
+            _context.ItemFieldValues.RemoveRange(item.FieldValues);
+
+    
+            _context.Items.Remove(item);
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", "Inventory", new { id = item.InventoryId });
+        }
+
     }
+
+
+
 }

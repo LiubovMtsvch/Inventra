@@ -24,4 +24,12 @@
 	  <Folder Include="wwwroot\js\" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <EditorConfigFiles Remove="D:\sourse\repos\CourseProjectitr\.editorconfig" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="D:\sourse\repos\CourseProjectitr\.editorconfig" />
+	</ItemGroup>
+
 </Project>

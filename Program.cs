@@ -14,15 +14,15 @@ using Microsoft.AspNetCore.DataProtection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ✅ Защита данных — ключи сохраняются между перезапусками
+
 builder.Services.AddDataProtection()
     .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "DataProtectionKeys")))
     .SetApplicationName("CourseProjectitr");
 
-// ✅ Кэш для сессий
+
 builder.Services.AddDistributedMemoryCache();
 
-// ✅ Сессии
+
 builder.Services.AddSession(options =>
 {
     options.Cookie.Name = ".CourseProjectitr.Session";
@@ -31,7 +31,7 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromMinutes(30);
 });
 
-// ✅ Аутентификация
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -91,12 +91,12 @@ builder.Services.AddAuthentication(options =>
         }
     };
 
-    // 🔁 Обработка ошибки авторизации
+
     options.Events.OnRemoteFailure = context =>
     {
         context.Response.Redirect("/User/Profile?error=auth_failed");
 
-        context.HandleResponse(); // предотвращает стандартный редирект
+        context.HandleResponse(); 
         return Task.CompletedTask;
     };
 });
@@ -113,15 +113,8 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-    // Проверка подключения и применение миграций
-    if (!context.Database.CanConnect())
-    {
-        context.Database.Migrate();
-    }
-
-    // Заполнение начальными категориями
-    DbInitializer.SeedCategories(context);
+    context.Database.Migrate(); 
+    DbInitializer.SeedCategories(context); 
 }
 
 //// ✅ Middleware

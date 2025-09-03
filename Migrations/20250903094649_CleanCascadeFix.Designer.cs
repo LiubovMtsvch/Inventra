@@ -4,6 +4,7 @@ using CourseProjectitr.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CourseProjectitr.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250903094649_CleanCascadeFix")]
+    partial class CleanCascadeFix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -116,32 +119,6 @@ namespace CourseProjectitr.Migrations
                     b.ToTable("InventoryPermissions");
                 });
 
-            modelBuilder.Entity("CourseProjectitr.Models.ItemFieldValue", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("InventoryFieldId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ItemId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Value")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InventoryFieldId");
-
-                    b.HasIndex("ItemId");
-
-                    b.ToTable("ItemFieldValues");
-                });
-
             modelBuilder.Entity("InventoryField", b =>
                 {
                     b.Property<int>("Id")
@@ -189,32 +166,6 @@ namespace CourseProjectitr.Migrations
                     b.ToTable("InventoryTag", (string)null);
                 });
 
-            modelBuilder.Entity("Item", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("InventoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("InventoryNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InventoryId");
-
-                    b.ToTable("Items");
-                });
-
             modelBuilder.Entity("Tag", b =>
                 {
                     b.Property<int>("Id")
@@ -243,25 +194,6 @@ namespace CourseProjectitr.Migrations
                     b.Navigation("Inventory");
                 });
 
-            modelBuilder.Entity("CourseProjectitr.Models.ItemFieldValue", b =>
-                {
-                    b.HasOne("InventoryField", "InventoryField")
-                        .WithMany()
-                        .HasForeignKey("InventoryFieldId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Item", "Item")
-                        .WithMany("FieldValues")
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("InventoryField");
-
-                    b.Navigation("Item");
-                });
-
             modelBuilder.Entity("InventoryField", b =>
                 {
                     b.HasOne("CourseProjectitr.Models.Inventory", "Inventory")
@@ -288,29 +220,11 @@ namespace CourseProjectitr.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Item", b =>
-                {
-                    b.HasOne("CourseProjectitr.Models.Inventory", "Inventory")
-                        .WithMany("Items")
-                        .HasForeignKey("InventoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Inventory");
-                });
-
             modelBuilder.Entity("CourseProjectitr.Models.Inventory", b =>
                 {
                     b.Navigation("InventoryFields");
 
-                    b.Navigation("Items");
-
                     b.Navigation("Permissions");
-                });
-
-            modelBuilder.Entity("Item", b =>
-                {
-                    b.Navigation("FieldValues");
                 });
 #pragma warning restore 612, 618
         }
