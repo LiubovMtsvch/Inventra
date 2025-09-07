@@ -87,7 +87,7 @@ public class InventoryController : Controller
                 {
                     var newTag = new Tag { Name = name };
                     _context.Tags.Add(newTag);
-                    await _context.SaveChangesAsync(); // сохранить новый тег
+                    await _context.SaveChangesAsync(); 
                     tags.Add(newTag);
                 }
             }
@@ -95,8 +95,6 @@ public class InventoryController : Controller
             model.Tags = tags;
         }
 
-
-        // 📌 Сохраняем инвентаризацию
         _context.Inventories.Add(model);
         await _context.SaveChangesAsync();
 

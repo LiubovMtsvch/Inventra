@@ -39,7 +39,7 @@ public class UserController : Controller
 
         var editableInventories = editablePermissions
             .Select(p => MapToSummary(p.Inventory))
-            .ToList();
+            .ToList(); //права доступа, а не сами инвентаризации
 
 
         var accessiblePermissions = await _context.InventoryPermissions
