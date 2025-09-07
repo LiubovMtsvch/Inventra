@@ -29,7 +29,7 @@ namespace CourseProjectitr.Controllers
                     return RedirectToAction("Index", "Home");
                 }
 
-                // Безопасное извлечение данных из Claims
+    
                 var name = result.Principal.FindFirst("urn:github:login")?.Value ?? "Unknown";
                 var email = result.Principal.FindFirst(ClaimTypes.Email)?.Value ?? "unknown@example.com";
                 var userId = result.Principal.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? Guid.NewGuid().ToString();
@@ -39,7 +39,7 @@ namespace CourseProjectitr.Controllers
                 HttpContext.Session.SetString("CurrentUserEmail", email);
                 HttpContext.Session.SetString("CurrentUserId", userId);
 
-                // Здесь можно добавить логику создания пользователя в БД, если нужно
+            
 
                 return RedirectToAction("Profile", "User");
             }
@@ -58,7 +58,7 @@ namespace CourseProjectitr.Controllers
                 }
                 catch
                 {
-                    // Если даже логирование не удалось — просто молчим
+                 
                 }
 
                 return RedirectToAction("Index", "Home");

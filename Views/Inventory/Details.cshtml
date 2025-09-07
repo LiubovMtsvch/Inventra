@@ -90,6 +90,48 @@
     </form>
 </div>
 
+
+<h3>Items</h3>
+
+@if (Model.Items != null && Model.Items.Any())
+{
+    <table class="table-clean table table-bordered table-striped table-hover align-middle text-start">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Inventory Number</th>
+                <th>Created At</th>
+                <th>Created By</th>
+                <th>Creator Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>@item.CustomId</td>
+                    <td>
+                        <a asp-action="EditItem" asp-controller="Inventory" asp-route-id="@item.Id" class="text-decoration-none">
+                            @item.Title
+                        </a>
+                    </td>
+
+                    <td>@item.InventoryNumber</td>
+                    <td>@item.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>@item.CreatedBy</td>
+                    <td>@item.CreatorEmail</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}
+else
+{
+    <p>No items found for this inventory.</p>
+}
+
 @if (TempData["AccessMessage"] != null)
 {
     var type = TempData["AccessMessageType"]?.ToString();

@@ -37,7 +37,7 @@ public class InventoryController : Controller
         var categories = _context.Categories
          .Select(c => new SelectListItem
          {
-             Value = c.Name, // или c.Id, если ты хранишь ID
+             Value = c.Name, 
              Text = c.Name
          })
          .ToList();
@@ -52,12 +52,17 @@ public class InventoryController : Controller
     {
         if (!ModelState.IsValid)
         {
-            var errors = ModelState.Values
-                .SelectMany(v => v.Errors)
-                .Select(e => e.ErrorMessage);
+            ViewBag.Categories = _context.Categories
+                .Select(c => new SelectListItem
+                {
+                    Value = c.Name,
+                    Text = c.Name
+                })
+                .ToList();
 
-            return Content("Ошибки: " + string.Join(", ", errors));
+            return View("~/Views/User/CreateInventory.cshtml", model); 
         }
+
 
         model.NumberPrefix = await GenerateNumberPrefix();
         model.OwnerName = HttpContext.Session.GetString("CurrentUserName") ?? "Unknown";
@@ -65,7 +70,7 @@ public class InventoryController : Controller
         model.CreatedAt = DateTime.UtcNow;
         model.OwnerEmail = User.FindFirstValue(ClaimTypes.Email) ?? HttpContext.Session.GetString("CurrentUserEmail") ?? "unknown@example.com";
 
-        // ✅ Обрабатываем теги до сохранения
+
         if (!string.IsNullOrEmpty(model.TagsJson))
         {
             var tagNames = JsonSerializer.Deserialize<List<string>>(model.TagsJson);
@@ -119,11 +124,23 @@ public class InventoryController : Controller
     }
 
 
+
     //private async Task<string> GenerateItemNumber(int inventoryId)
     //{
     //    var count = await _context.Items.CountAsync(i => i.InventoryId == inventoryId);
     //    return $"ITEM-{inventoryId}-{count + 1:D3}";
     //}
+
+    private string GenerateCustomId(int inventoryId)
+    {
+        var inventory = _context.Inventories.FirstOrDefault(i => i.Id == inventoryId);
+        if (inventory == null) return "UNKNOWN";
+
+        var count = _context.Items.Count(i => i.InventoryId == inventoryId);
+        var prefix = inventory.NumberPrefix ?? "INV";
+        return $"{prefix}_{count + 1:D3}";
+
+    }
 
 
     public IActionResult AddItem(int id)
@@ -140,35 +157,76 @@ public class InventoryController : Controller
         return View(viewModel);
     }
 
-    //[HttpPost]
-    //[ValidateAntiForgeryToken]
-    //public async Task<IActionResult> AddItem(InventoryItemViewModel model)
-    //{
-    //    if (!ModelState.IsValid) return View(model);
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddItem(InventoryItemViewModel model)
+    {
+        if (!ModelState.IsValid) return View(model);
 
-    //    var item = new Item
-    //    {
-    //        Title = model.Title,
-    //        InventoryNumber = model.InventoryNumber,
-    //        InventoryId = model.InventoryId
-    //    };
-
-    //    _context.Items.Add(item);
-    //    await _context.SaveChangesAsync();
-
-    //    return RedirectToAction("Details", new { id = model.InventoryId });
-    //}
+        var item = new Item
+        {
+            Title = model.Title,
+            InventoryNumber = model.InventoryNumber,
+            InventoryId = model.InventoryId,
+            CustomId = GenerateCustomId(model.InventoryId),
+            CreatedAt = DateTime.UtcNow,
+            CreatedBy = HttpContext.Session.GetString("CurrentUserName") ?? User.Identity?.Name ?? "Unknown",
+            CreatorEmail = User.FindFirstValue(ClaimTypes.Email) ?? HttpContext.Session.GetString("CurrentUserEmail") ?? "unknown@example.com"
+        };
 
 
 
-    // Метод генерации NumberPrefix
+        _context.Items.Add(item);
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction("Details", new { id = model.InventoryId });
+    }
+
+
+    [HttpGet]
+    public IActionResult EditItem(int id)
+    {
+        var item = _context.Items.FirstOrDefault(i => i.Id == id);
+        if (item == null) return NotFound();
+
+        var editItemModel = new EditItemViewModel
+        {
+            Id = item.Id,
+            InventoryId = item.InventoryId,
+            Title = item.Title,
+            InventoryNumber = item.InventoryNumber,
+            CustomId = item.CustomId
+        };
+
+        return View("EditItem", editItemModel);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult EditItem(EditItemViewModel model)
+    {
+        if (!ModelState.IsValid) return View(model);
+
+        var item = _context.Items.FirstOrDefault(i => i.Id == model.Id);
+        if (item == null) return NotFound();
+
+        item.Title = model.Title;
+        item.InventoryNumber = model.InventoryNumber;
+        item.CustomId = model.CustomId;
+
+        _context.SaveChanges();
+
+        return RedirectToAction("Details", "Inventory", new { id = model.InventoryId });
+    }
+
+
 
     [Authorize]
     public async Task<IActionResult> Details(int id)
     {
         var inventory = await _context.Inventories
         .Include(i => i.Tags)
-        //.Include(i => i.Items) 
+        .Include(i => i.Items) 
         .FirstOrDefaultAsync(i => i.Id == id);
 
 
@@ -182,14 +240,13 @@ public class InventoryController : Controller
     public async Task<IActionResult> DetailsForAll(int id)
     {
         var inventory = await _context.Inventories
-            .Include(i => i.Tags)
+            .Include(i => i.Items) 
+            .Include(i => i.Tags)  
             .FirstOrDefaultAsync(i => i.Id == id);
-
-        if (inventory == null || !inventory.IsPublic)
-            return NotFound(); // или RedirectToAction("Login", "User")
 
         return View("DetailsForAll", inventory);
     }
+
 
 
     [HttpGet]

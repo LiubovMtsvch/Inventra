@@ -1,0 +1,39 @@
+﻿@model CourseProjectitr.Models.EditItemViewModel
+
+@{
+    ViewData["Title"] = "Edit Item";
+}
+
+<h2 class="mb-4">Edit Item</h2>
+
+<form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="InventoryId" />
+
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label">Title</label>
+        <input asp-for="Title" class="form-control" placeholder="Enter item title" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="InventoryNumber" class="form-label">Inventory Number</label>
+        <input asp-for="InventoryNumber" class="form-control" placeholder="e.g. ITEM-001" />
+        <span asp-validation-for="InventoryNumber" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CustomId" class="form-label">Custom ID</label>
+        <input asp-for="CustomId" class="form-control" placeholder="e.g. INV-001" />
+        <span asp-validation-for="CustomId" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="button-13">Save Changes</button>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

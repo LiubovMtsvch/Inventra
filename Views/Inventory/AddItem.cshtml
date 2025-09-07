@@ -15,7 +15,6 @@
             <thead>
                 <tr>
                     <th>Title</th>
-                    <th>Description</th>
                     <th>Inventory Number</th>
                 </tr>
             </thead>
@@ -23,9 +22,6 @@
                 <tr>
                     <td>
                         <input name="Title" class="form-control" placeholder="Item title" required />
-                    </td>
-                    <td class="wrap-text text-wrap">
-                        <textarea name="Description" class="form-control" placeholder="Item description"></textarea>
                     </td>
                     <td>
                         <input name="InventoryNumber" class="form-control" placeholder="e.g. ITEM-001" required />
@@ -35,46 +31,16 @@
         </table>
 
         <button type="submit" class="button-13">Save</button>
-
     </form>
 </div>
-
-@section Styles {
-    <style>
-        .table-clean {
-            font-size: 0.95rem;
-            border-collapse: collapse;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 6px;
-            box-sizing: border-box;
-        }
-
-        .button-13 {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-            .button-13:hover {
-                background-color: #0056b3;
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
             }
-
-        .table-scroll {
-            overflow-x: auto;
-        }
-
-        .wrap-text {
-            word-break: break-word;
-        }
-
-        .text-start {
-            text-align: left;
-        }
-    </style>
+        </ul>
+    </div>
 }

@@ -11,4 +11,10 @@ public class Item
 
     public ICollection<ItemFieldValue> FieldValues { get; set; } = new List<ItemFieldValue>();
 
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public string? CreatedBy { get; set; }
+    public string? CreatorEmail { get; set; }
+
+    public string? CustomId { get; set; } 
+
 }

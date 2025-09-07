@@ -10,17 +10,16 @@ namespace CourseProjectitr.Models
         public int Id { get; set; }
         public string? OwnerEmail { get; set; }
 
-        [Required(ErrorMessage = "Название обязательно")]
+        [Required(ErrorMessage = "Title is required")]
         public string Title { get; set; }
 
         [NotMapped]
         public string? TagsJson { get; set; }
 
-
-        [Required(ErrorMessage = "Описание обязательно")]
+        [Required(ErrorMessage = "Description is required")]
         public string Description { get; set; }
 
-        [Required(ErrorMessage = "Категория обязательна")]
+        [Required(ErrorMessage = "Category is required")]
         public string Category { get; set; }
 
         public string? ImageUrl { get; set; }
@@ -36,7 +35,5 @@ namespace CourseProjectitr.Models
         public string? NumberPrefix { get; set; }
         public ICollection<InventoryPermission> Permissions { get; set; } = new List<InventoryPermission>();
         public ICollection<InventoryField> InventoryFields { get; set; } = new List<InventoryField>();
-
-
     }
 }
